@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="P4x1s">
+
+
+
+
+
+<title>AI大模型在红队攻击中的创新应用与防御思考 | P4x1s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">P4x1s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">P4x1s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">AI大模型在红队攻击中的创新应用与防御思考</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">P4x1s</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 27, 2025&nbsp;&nbsp;12:28:36</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/AI-Security/">AI Security</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="智能化信息收集与侦察"><a href="#智能化信息收集与侦察" class="headerlink" title="智能化信息收集与侦察"></a>智能化信息收集与侦察</h2><p>传统红队攻击的信息收集阶段耗时且依赖人工经验，而AI大模型彻底改变了这一局面。通过自然语言处理能力，大模型能够自动化分析公开情报源，识别目标组织的技术栈、人员结构和潜在攻击面。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> pipeline</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IntelligentRecon</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.ner_pipeline = pipeline(<span class="string">&quot;ner&quot;</span>, model=<span class="string">&quot;dslim/bert-base-NER&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.text_generation = pipeline(<span class="string">&quot;text-generation&quot;</span>, model=<span class="string">&quot;gpt2&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">analyze_public_data</span>(<span class="params">self, target_domain</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;智能分析公开数据&quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 收集公开信息</span></span><br><span class="line">        sources = [</span><br><span class="line">            <span class="string">f&quot;https://api.shodan.io/shodan/host/search?key=YOUR_API_KEY&amp;query=<span class="subst">&#123;target_domain&#125;</span>&quot;</span>,</span><br><span class="line">            <span class="string">f&quot;https://api.hunter.io/v2/domain-search?domain=<span class="subst">&#123;target_domain&#125;</span>&amp;api_key=YOUR_API_KEY&quot;</span></span><br><span class="line">        ]</span><br><span class="line">        </span><br><span class="line">        collected_data = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> source <span class="keyword">in</span> sources:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                response = requests.get(source)</span><br><span class="line">                collected_data += response.text</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 使用NER识别关键实体</span></span><br><span class="line">        entities = <span class="variable language_">self</span>.ner_pipeline(collected_data)</span><br><span class="line">        tech_stack = <span class="variable language_">self</span>._extract_tech_entities(entities)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;technology_stack&#x27;</span>: tech_stack,</span><br><span class="line">            <span class="string">&#x27;attack_surface&#x27;</span>: <span class="variable language_">self</span>._generate_attack_surface(tech_stack),</span><br><span class="line">            <span class="string">&#x27;recon_strategy&#x27;</span>: <span class="variable language_">self</span>._generate_recon_strategy(tech_stack)</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_generate_recon_strategy</span>(<span class="params">self, tech_stack</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;基于技术栈生成侦察策略&quot;&quot;&quot;</span></span><br><span class="line">        prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        基于以下技术栈生成详细的侦察策略：</span></span><br><span class="line"><span class="string">        <span class="subst">&#123;tech_stack&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        包括：</span></span><br><span class="line"><span class="string">        1. 子域名枚举方法</span></span><br><span class="line"><span class="string">        2. 端口扫描策略</span></span><br><span class="line"><span class="string">        3. 服务指纹识别</span></span><br><span class="line"><span class="string">        4. 避免检测的措施</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.text_generation(prompt, max_length=<span class="number">300</span>)[<span class="number">0</span>][<span class="string">&#x27;generated_text&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>基于预训练知识，AI可以推断目标可能使用的内部系统与供应商关系，构建出立体的攻击路径图谱。在子域名枚举、端口服务识别等环节，AI模型能够理解上下文并生成针对性扫描策略，而非简单执行机械式扫描。</p>
+<h2 id="精准化社会工程学攻击"><a href="#精准化社会工程学攻击" class="headerlink" title="精准化社会工程学攻击"></a>精准化社会工程学攻击</h2><p>社会工程学攻击的成功率高度依赖对目标心理和语境的把握。AI大模型通过分析公开的员工信息、社交动态和公司文档，能够生成高度逼真的钓鱼邮件和沟通内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openai</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AISocialEngineering</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, api_key</span>):</span><br><span class="line">        <span class="variable language_">self</span>.client = openai.OpenAI(api_key=api_key)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_targeted_phishing</span>(<span class="params">self, target_info, template_type=<span class="string">&quot;urgent_update&quot;</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成针对性钓鱼邮件&quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        context = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        目标信息：</span></span><br><span class="line"><span class="string">        - 公司：<span class="subst">&#123;target_info.get(<span class="string">&#x27;company&#x27;</span>)&#125;</span></span></span><br><span class="line"><span class="string">        - 职位：<span class="subst">&#123;target_info.get(<span class="string">&#x27;position&#x27;</span>)&#125;</span></span></span><br><span class="line"><span class="string">        - 部门：<span class="subst">&#123;target_info.get(<span class="string">&#x27;department&#x27;</span>)&#125;</span></span></span><br><span class="line"><span class="string">        - 近期活动：<span class="subst">&#123;target_info.get(<span class="string">&#x27;recent_activities&#x27;</span>)&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        生成看起来真实的<span class="subst">&#123;template_type&#125;</span>类型邮件</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        response = <span class="variable language_">self</span>.client.chat.completions.create(</span><br><span class="line">            model=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">            messages=[</span><br><span class="line">                &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;system&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;你是一个专业的红队成员，擅长创建逼真的钓鱼邮件。&quot;</span>&#125;,</span><br><span class="line">                &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: context&#125;</span><br><span class="line">            ],</span><br><span class="line">            temperature=<span class="number">0.7</span></span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> response.choices[<span class="number">0</span>].message.content</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_convincing_pretext</span>(<span class="params">self, scenario</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成可信的伪装场景&quot;&quot;&quot;</span></span><br><span class="line">        scenarios = &#123;</span><br><span class="line">            <span class="string">&quot;it_support&quot;</span>: <span class="string">&quot;IT支持团队需要验证账户信息&quot;</span>,</span><br><span class="line">            <span class="string">&quot;hr_update&quot;</span>: <span class="string">&quot;人力资源部门政策更新确认&quot;</span>,</span><br><span class="line">            <span class="string">&quot;security_audit&quot;</span>: <span class="string">&quot;安全团队进行例行安全审计&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        pretext_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        为以下场景创建详细的伪装身份脚本：</span></span><br><span class="line"><span class="string">        场景：<span class="subst">&#123;scenarios.get(scenario, scenario)&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        要求：</span></span><br><span class="line"><span class="string">        1. 建立可信的身份背景</span></span><br><span class="line"><span class="string">        2. 提供合理的联系理由</span></span><br><span class="line"><span class="string">        3. 包含应对质疑的回答</span></span><br><span class="line"><span class="string">        4. 保持专业且自然的语气</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.client.chat.completions.create(</span><br><span class="line">            model=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">            messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: pretext_prompt&#125;],</span><br><span class="line">            temperature=<span class="number">0.8</span></span><br><span class="line">        ).choices[<span class="number">0</span>].message.content</span><br></pre></td></tr></table></figure>
+
+<p>这些内容不仅语法流畅，更能贴合目标组织的内部沟通风格和特定业务场景。与模板化攻击不同，AI驱动的社会工程学攻击具备动态适应能力。</p>
+<h2 id="代码生成与漏洞利用"><a href="#代码生成与漏洞利用" class="headerlink" title="代码生成与漏洞利用"></a>代码生成与漏洞利用</h2><p>在漏洞挖掘与利用阶段，AI大模型展现出突破性能力。基于海量代码训练的大模型能够理解漏洞模式，并根据目标环境生成定制化的攻击载荷。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AIExploitDevelopment</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_endpoint</span>):</span><br><span class="line">        <span class="variable language_">self</span>.model_endpoint = model_endpoint</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">analyze_vulnerability</span>(<span class="params">self, code_snippet</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;分析代码中的潜在漏洞&quot;&quot;&quot;</span></span><br><span class="line">        analysis_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        分析以下代码中的安全漏洞，并提供利用方案：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        ```c</span></span><br><span class="line"><span class="string">        <span class="subst">&#123;code_snippet&#125;</span></span></span><br></pre></td></tr></table></figure>
+<pre><code>    请识别：
+    1. 漏洞类型
+    2. 利用条件
+    3. 利用代码示例
+    4. 缓解措施
+    &quot;&quot;&quot;
+    
+    return self._query_ai_model(analysis_prompt)
+
+def generate_payload(self, target_os, target_arch, payload_type):
+    &quot;&quot;&quot;生成针对特定环境的载荷&quot;&quot;&quot;
+    payload_prompt = f&quot;&quot;&quot;
+    生成&#123;target_os&#125; &#123;target_arch&#125;平台的&#123;payload_type&#125;载荷，要求：
+    1. 避免检测的编码技术
+    2. 稳定性考虑
+    3. 内存规避技术
+    4. 提供编译说明
+    &quot;&quot;&quot;
+    
+    payload_code = self._query_ai_model(payload_prompt)
+    return self._compile_payload(payload_code, target_os, target_arch)
+
+def generate_polymorphic_variants(self, original_code, num_variants=5):
+    &quot;&quot;&quot;生成多态变种以规避检测&quot;&quot;&quot;
+    variants = []
+    for i in range(num_variants):
+        variant_prompt = f&quot;&quot;&quot;
+        创建以下代码的功能等效变种，改变代码结构但保持相同功能：
+        
+        &#123;original_code&#125;
+        
+        要求：
+        - 改变变量名和控制流
+        - 保持相同的最终效果
+        - 避免检测签名
+        &quot;&quot;&quot;
+        variants.append(self._query_ai_model(variant_prompt))
+    
+    return variants
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">从简单的缓冲区溢出到复杂的逻辑漏洞，AI辅助的漏洞利用开发时间显著缩短。更为关键的是，大模型能够将攻击技术进行多样化转换，生成功能等效但特征各异的攻击代码。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">## 自适应命令与控制</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">红队攻击的命令与控制(C2)阶段对隐蔽性要求极高。AI大模型可以分析目标网络流量模式，生成与之融合的C2通信流量。</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">import socket</span><br><span class="line">import ssl</span><br><span class="line">import json</span><br><span class="line">import time</span><br><span class="line">from cryptography.fernet import Fernet</span><br><span class="line"></span><br><span class="line">class AIC2Controller:</span><br><span class="line">    def __init__(self, model_endpoint):</span><br><span class="line">        self.model_endpoint = model_endpoint</span><br><span class="line">        self.encryption = Fernet.generate_key()</span><br><span class="line">        self.cipher = Fernet(self.encryption)</span><br><span class="line">        </span><br><span class="line">    def generate_stealth_protocol(self, normal_traffic_samples):</span><br><span class="line">        &quot;&quot;&quot;基于正常流量生成隐蔽通信协议&quot;&quot;&quot;</span><br><span class="line">        analysis_prompt = f&quot;&quot;&quot;</span><br><span class="line">        分析以下正常网络流量模式，设计隐蔽的C2通信协议：</span><br><span class="line">        </span><br><span class="line">        &#123;normal_traffic_samples&#125;</span><br><span class="line">        </span><br><span class="line">        要求：</span><br><span class="line">        1. 模仿正常协议模式</span><br><span class="line">        2. 支持加密通信</span><br><span class="line">        3. 包含心跳机制</span><br><span class="line">        4. 实现指令分发</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        </span><br><span class="line">        protocol_spec = self._query_ai_model(analysis_prompt)</span><br><span class="line">        return self._implement_protocol(protocol_spec)</span><br><span class="line">    </span><br><span class="line">    def adaptive_communication(self, network_conditions):</span><br><span class="line">        &quot;&quot;&quot;自适应通信策略&quot;&quot;&quot;</span><br><span class="line">        adaptive_prompt = f&quot;&quot;&quot;</span><br><span class="line">        当前网络条件：&#123;network_conditions&#125;</span><br><span class="line">        设计自适应通信策略：</span><br><span class="line">        - 检测到DPI时切换协议</span><br><span class="line">        - 带宽限制时调整传输频率</span><br><span class="line">        - 高延迟环境下优化确认机制</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        </span><br><span class="line">        strategy = self._query_ai_model(adaptive_prompt)</span><br><span class="line">        return self._parse_communication_strategy(strategy)</span><br><span class="line">    </span><br><span class="line">    def traffic_mimicry(self, target_protocol):</span><br><span class="line">        &quot;&quot;&quot;流量模拟与伪装&quot;&quot;&quot;</span><br><span class="line">        mimic_prompt = f&quot;&quot;&quot;</span><br><span class="line">        为&#123;target_protocol&#125;协议创建流量伪装方案：</span><br><span class="line">        - 数据包大小分布匹配</span><br><span class="line">        - 时间间隔模式模拟</span><br><span class="line">        - 协议字段填充策略</span><br><span class="line">        - 异常情况处理</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        </span><br><span class="line">        return self._query_ai_model(mimic_prompt)</span><br></pre></td></tr></table></figure>
+
+<p>通过理解网络协议和加密通信，AI能够设计出难以被传统检测机制识别的隐蔽信道。此外，AI系统可以实时监控防御措施的反应，动态调整C2策略。</p>
+<h2 id="权限维持与横向移动"><a href="#权限维持与横向移动" class="headerlink" title="权限维持与横向移动"></a>权限维持与横向移动</h2><p>在攻防演练的后期阶段，AI大模型能够根据已获取的环境信息，智能规划权限提升和横向移动路径。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AIPostExploitation</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_endpoint</span>):</span><br><span class="line">        <span class="variable language_">self</span>.model_endpoint = model_endpoint</span><br><span class="line">        <span class="variable language_">self</span>.collected_info = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">analyze_environment</span>(<span class="params">self, system_info</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;分析目标环境并规划攻击路径&quot;&quot;&quot;</span></span><br><span class="line">        analysis_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        基于以下系统环境信息，制定权限提升和横向移动策略：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        <span class="subst">&#123;system_info&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        请提供：</span></span><br><span class="line"><span class="string">        1. 可能的提权漏洞</span></span><br><span class="line"><span class="string">        2. 横向移动路径</span></span><br><span class="line"><span class="string">        3. 凭证获取方法</span></span><br><span class="line"><span class="string">        4. 持久化机制</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(analysis_prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_persistence_mechanism</span>(<span class="params">self, os_type, detection_level</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成持久化机制&quot;&quot;&quot;</span></span><br><span class="line">        persistence_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        为<span class="subst">&#123;os_type&#125;</span>系统设计<span class="subst">&#123;detection_level&#125;</span>检测级别的持久化方案：</span></span><br><span class="line"><span class="string">        - 注册表修改</span></span><br><span class="line"><span class="string">        - 服务创建</span></span><br><span class="line"><span class="string">        - 计划任务</span></span><br><span class="line"><span class="string">        - WMI事件订阅</span></span><br><span class="line"><span class="string">        - 避免常见检测模式</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(persistence_prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">lateral_movement_planning</span>(<span class="params">self, network_topology</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;横向移动路径规划&quot;&quot;&quot;</span></span><br><span class="line">        planning_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        基于以下网络拓扑规划最优横向移动路径：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        <span class="subst">&#123;network_topology&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        考虑因素：</span></span><br><span class="line"><span class="string">        - 信任关系</span></span><br><span class="line"><span class="string">        - 访问权限</span></span><br><span class="line"><span class="string">        - 安全控制</span></span><br><span class="line"><span class="string">        - 业务价值</span></span><br><span class="line"><span class="string">        - 检测风险</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(planning_prompt)</span><br></pre></td></tr></table></figure>
+
+<p>它不仅能识别潜在的提权漏洞，还能评估不同攻击路径的风险收益比，选择最优行动方案。在横向移动过程中，AI可以模拟正常用户行为模式，将攻击动作隐藏在常规操作中。</p>
+<h2 id="防御启示与对策"><a href="#防御启示与对策" class="headerlink" title="防御启示与对策"></a>防御启示与对策</h2><p>AI大模型赋能红队攻击的同时，也为蓝队防御带来了新的挑战与机遇。防御方需要发展基于行为分析的检测机制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AIEnhancedDefense</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_endpoint</span>):</span><br><span class="line">        <span class="variable language_">self</span>.model_endpoint = model_endpoint</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">detect_ai_generated_content</span>(<span class="params">self, text_content</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;检测AI生成内容&quot;&quot;&quot;</span></span><br><span class="line">        detection_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        分析以下文本是否为AI生成，并提供判断依据：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        <span class="subst">&#123;text_content&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        检测特征：</span></span><br><span class="line"><span class="string">        - 语言模式一致性</span></span><br><span class="line"><span class="string">        - 内容逻辑性</span></span><br><span class="line"><span class="string">        - 风格异常</span></span><br><span class="line"><span class="string">        - 特定模式重复</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(detection_prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">behavioral_analysis</span>(<span class="params">self, user_activities</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;用户行为分析&quot;&quot;&quot;</span></span><br><span class="line">        analysis_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        分析用户行为模式，识别异常活动：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        <span class="subst">&#123;user_activities&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        检测：</span></span><br><span class="line"><span class="string">        - 异常登录模式</span></span><br><span class="line"><span class="string">        - 非工作时间活动</span></span><br><span class="line"><span class="string">        - 权限提升尝试</span></span><br><span class="line"><span class="string">        - 数据访问模式变化</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(analysis_prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_defense_strategies</span>(<span class="params">self, attack_techniques</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成针对性防御策略&quot;&quot;&quot;</span></span><br><span class="line">        defense_prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        针对以下攻击技术制定防御策略：</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        <span class="subst">&#123;attack_techniques&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        包括：</span></span><br><span class="line"><span class="string">        - 技术控制措施</span></span><br><span class="line"><span class="string">        - 流程改进建议</span></span><br><span class="line"><span class="string">        - 人员培训重点</span></span><br><span class="line"><span class="string">        - 监控检测规则</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._query_ai_model(defense_prompt)</span><br></pre></td></tr></table></figure>
+
+<p>同样，AI技术也可用于增强安全监控、威胁狩猎和事件响应能力，构建智能防御体系。零信任架构在应对AI增强攻击时显得尤为重要，因为它不假设任何内部流量是可信的。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>AI大模型正在重新定义红队攻击的边界，使攻击测试更加全面、隐蔽和高效。这种技术演进不仅提升了红队演练的价值，也迫使防御策略加速进化。在AI赋能的网络安全新纪元，攻防双方的竞争将更加聚焦于智能与适应能力，而非单纯的技术堆砌。唯有深入理解AI在攻击中的应用模式，才能构建与之抗衡的防御体系。</p>
+<p>转载：<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/19372">https://xz.aliyun.com/news/19372</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>P4x1s</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://p4x1s.github.io/2025/11/27/Innovative-Applications-and-Defense-Considerations-of-AI-Large-Scale-Models-in-Red-Team-Attacks/">https://p4x1s.github.io/2025/11/27/Innovative-Applications-and-Defense-Considerations-of-AI-Large-Scale-Models-in-Red-Team-Attacks/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2025 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/AI/"># AI</a>
+                    
+                        <a href="/tags/Large-Model/"># Large Model</a>
+                    
+                        <a href="/tags/Attack-AI/"># Attack AI</a>
+                    
+                        <a href="/tags/LM-Attack/"># LM Attack</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/11/26/Large-scale-security-attack-and-defense-practices-and-jailbreak-attack-methods-and-ideas/">大模型安全攻防与越狱攻击方法思路</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© P4x1s | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/P4x1s" target="_blank">P4x1s</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
