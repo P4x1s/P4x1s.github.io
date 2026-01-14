@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="P4x1s">
+
+
+
+
+
+<title>P4x1s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const pagebody = document.getElementsByTagName('body')[0]
+
+            function setTheme(status) {
+
+                if (status === 'dark') {
+                    window.sessionStorage.theme = 'dark'
+                    pagebody.classList.add('dark-theme');
+
+                } else if (status === 'light') {
+                    window.sessionStorage.theme = 'light'
+                    pagebody.classList.remove('dark-theme');
+                }
+            };
+
+            setTheme(window.sessionStorage.theme)
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">P4x1s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">P4x1s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 17.27q-.213 0-.356-.145T4 16.768t.144-.356t.356-.143h15q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.144T4 11.999t.144-.356t.356-.143h15q.213 0 .356.144t.144.357t-.144.356t-.356.143zm0-4.77q-.213 0-.356-.143Q4 7.443 4 7.23t.144-.356t.356-.143h15q.213 0 .356.144T20 7.23t-.144.356t-.356.144z"/></svg>
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols Light by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z"/></svg>
+                </div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                <a class="menu-item" href="/archives">Posts</a>
+                
+                <a class="menu-item" href="/category">Categories</a>
+                
+                <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if (toggleMenu.classList.contains("active")) {
+            toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        } else {
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title"></h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">P4x1s</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">January 14, 2026&nbsp;&nbsp;9:28:49</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>以下是本地微调Qwen3 8B模型的完整教程，分步骤详细说明（假设你已具备基础Python环境和GPU）：</p>
+<hr>
+<h3 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. 环境准备</h3><h4 id="硬件要求"><a href="#硬件要求" class="headerlink" title="硬件要求"></a>硬件要求</h4><ul>
+<li>至少8GB显存的GPU（如RTX 3090&#x2F;4090）或使用混合精度训练。</li>
+<li>推荐配置：16GB显存以上，以支持LoRA微调。</li>
+</ul>
+<h4 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 安装PyTorch和Hugging Face库</span><br><span class="line">pip install torch torchvision torchaudio</span><br><span class="line">pip install transformers accelerate peft bitsandbytes</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-数据准备"><a href="#2-数据准备" class="headerlink" title="2. 数据准备"></a>2. 数据准备</h3><h4 id="步骤1：整理训练数据"><a href="#步骤1：整理训练数据" class="headerlink" title="步骤1：整理训练数据"></a>步骤1：整理训练数据</h4><ul>
+<li><p>格式要求：使用<code>&lt;s&gt; [input] &lt;/s&gt; [output] &lt;/s&gt;</code>格式的文本（如对话、问答、指令跟随）。</p>
+</li>
+<li><p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;s&gt; 请解释量子力学中的叠加态。 &lt;/s&gt;</span><br><span class="line">量子叠加态是指量子系统在未被观测时同时处于多个可能状态的组合...</span><br><span class="line">&lt;/s&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="步骤2：数据清洗"><a href="#步骤2：数据清洗" class="headerlink" title="步骤2：数据清洗"></a>步骤2：数据清洗</h4><ul>
+<li>使用Python脚本去除噪声（如特殊符号、HTML标签）。</li>
+<li>工具：<code>web_fetch</code>（若需从网页提取数据）结合正则表达式清洗。</li>
+</ul>
+<hr>
+<h3 id="3-加载预训练模型"><a href="#3-加载预训练模型" class="headerlink" title="3. 加载预训练模型"></a>3. 加载预训练模型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from transformers import AutoModelForCausalLM, AutoTokenizer</span><br><span class="line">import torch</span><br><span class="line"></span><br><span class="line"># 加载Qwen3 8B模型和分词器</span><br><span class="line">model_name = &quot;Qwen3-8B&quot;  # 替换为实际模型路径</span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(model_name)</span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(model_name, device_map=&quot;auto&quot;, torch_dtype=torch.float16)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="4-应用LoRA微调（节省显存）"><a href="#4-应用LoRA微调（节省显存）" class="headerlink" title="4. 应用LoRA微调（节省显存）"></a>4. 应用LoRA微调（节省显存）</h3><h4 id="步骤1：安装LoRA库"><a href="#步骤1：安装LoRA库" class="headerlink" title="步骤1：安装LoRA库"></a>步骤1：安装LoRA库</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install peft</span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤2：添加LoRA适配器"><a href="#步骤2：添加LoRA适配器" class="headerlink" title="步骤2：添加LoRA适配器"></a>步骤2：添加LoRA适配器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from peft import LoraConfig, get_peft_model</span><br><span class="line"></span><br><span class="line"># 配置LoRA参数</span><br><span class="line">lora_config = LoraConfig(</span><br><span class="line">    r=16,              # 低秩矩阵维度</span><br><span class="line">    lora_alpha=32,      # 缩放因子</span><br><span class="line">    lora_dropout=0.1,   # Dropout率</span><br><span class="line">    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;]  # 仅训练特定层</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># 应用LoRA</span><br><span class="line">model = get_peft_model(model, lora_config)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-训练配置"><a href="#5-训练配置" class="headerlink" title="5. 训练配置"></a>5. 训练配置</h3><h4 id="步骤1：定义训练参数"><a href="#步骤1：定义训练参数" class="headerlink" title="步骤1：定义训练参数"></a>步骤1：定义训练参数</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from transformers import TrainingArguments, DataCollatorForLanguageModeling</span><br><span class="line"></span><br><span class="line">training_args = TrainingArguments(</span><br><span class="line">    output_dir=&quot;./results&quot;,           # 输出目录</span><br><span class="line">    per_device_train_batch_size=4,    # 每设备批次大小</span><br><span class="line">    num_train_epochs=3,               # 训练轮数</span><br><span class="line">    learning_rate=1e-4,               # 学习率</span><br><span class="line">    save_steps=1000,                  # 保存频率</span><br><span class="line">    save_total_limit=2,               # 最大保存模型数</span><br><span class="line">    fp16=True,                        # 混合精度训练</span><br><span class="line">    logging_dir=&quot;./logs&quot;,             # 日志目录</span><br><span class="line">    logging_steps=100,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="步骤2：定义数据加载器"><a href="#步骤2：定义数据加载器" class="headerlink" title="步骤2：定义数据加载器"></a>步骤2：定义数据加载器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from datasets import load_dataset</span><br><span class="line"></span><br><span class="line"># 假设数据已保存为`train_data.json`</span><br><span class="line">dataset = load_dataset(&quot;json&quot;, data_files=&#123;&quot;train&quot;: &quot;train_data.json&quot;&#125;)</span><br><span class="line">tokenized_dataset = dataset.map(lambda x: tokenizer(x[&quot;text&quot;], truncation=True, padding=&quot;max_length&quot;, max_length=512), batched=True)</span><br><span class="line"></span><br><span class="line">data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="6-开始训练"><a href="#6-开始训练" class="headerlink" title="6. 开始训练"></a>6. 开始训练</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from transformers import Trainer</span><br><span class="line"></span><br><span class="line">trainer = Trainer(</span><br><span class="line">    model=model,</span><br><span class="line">    args=training_args,</span><br><span class="line">    data_collator=data_collator,</span><br><span class="line">    train_dataset=tokenized_dataset[&quot;train&quot;],</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer.train()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="7-保存和部署模型"><a href="#7-保存和部署模型" class="headerlink" title="7. 保存和部署模型"></a>7. 保存和部署模型</h3><h4 id="保存微调后的模型"><a href="#保存微调后的模型" class="headerlink" title="保存微调后的模型"></a>保存微调后的模型</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 保存模型权重和适配器</span><br><span class="line">model.save_pretrained(&quot;./fine_tuned_model&quot;)</span><br><span class="line">tokenizer.save_pretrained(&quot;./fine_tuned_model&quot;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="部署为本地API"><a href="#部署为本地API" class="headerlink" title="部署为本地API"></a>部署为本地API</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 使用FastAPI部署</span><br><span class="line">from fastapi import FastAPI</span><br><span class="line">from transformers import pipeline</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line">pipe = pipeline(&quot;text-generation&quot;, model=&quot;./fine_tuned_model&quot;, tokenizer=tokenizer)</span><br><span class="line"></span><br><span class="line">@app.post(&quot;/generate&quot;)</span><br><span class="line">async def generate(text: str):</span><br><span class="line">    response = pipe(text, max_length=512)</span><br><span class="line">    return &#123;&quot;result&quot;: response[0][&quot;generated_text&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="8-评估与优化"><a href="#8-评估与优化" class="headerlink" title="8. 评估与优化"></a>8. 评估与优化</h3><ul>
+<li><p>验证集测试：使用<code>evaluate</code>库计算BLEU&#x2F;ROUGE分数。</p>
+</li>
+<li><p>显存优化</p>
+<p>：若显存不足，尝试：</p>
+<ul>
+<li>降低<code>per_device_train_batch_size</code>。</li>
+<li>使用<code>bitsandbytes</code>量化（需额外安装）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="资源推荐"><a href="#资源推荐" class="headerlink" title="资源推荐"></a>资源推荐</h3><ul>
+<li>代码模板：<a target="_blank" rel="noopener" href="https://github.com/huggingface/transformers/tree/main/examples/pytorch/seq2seq">Hugging Face LoRA微调示例</a></li>
+<li>量化教程：<a target="_blank" rel="noopener" href="https://github.com/LAION-AI/LoRA">bitsandbytes量化指南</a></li>
+<li>数据集：通过<code>web_search</code>查找领域相关数据集（如医疗&#x2F;法律）。</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>P4x1s</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://p4x1s.github.io/2026/01/14/Qwen3%208B%20Model%20Fine-tuning%20Tutorial/">https://p4x1s.github.io/2026/01/14/Qwen3%208B%20Model%20Fine-tuning%20Tutorial/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2025 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/11/27/Innovative-Applications-and-Defense-Considerations-of-AI-Large-Scale-Models-in-Red-Team-Attacks/">AI大模型在红队攻击中的创新应用与防御思考</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© P4x1s | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/P4x1s" target="_blank">P4x1s</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
